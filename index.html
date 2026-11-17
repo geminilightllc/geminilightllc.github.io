@@ -523,6 +523,30 @@
   .faq-a{display:none; padding:0 4px 22px; color:var(--muted); max-width:64ch}
   .faq-item.open .faq-a{display:block}
 
+  /* November Madness — contest banner: deep green + gold, matching the
+     contest branding. Solid in both colour schemes (like the contact
+     band), so it reads as a deliberate interlude between sections. */
+  section.block.madness{background:#0B3B2F; color:#eef7f1}
+  .madness-in{max-width:760px; margin:0 auto; text-align:center}
+  .madness-kicker{
+    display:flex; align-items:center; justify-content:center; gap:12px;
+    font-family:"IBM Plex Mono",monospace; font-size:12.5px; font-weight:600;
+    letter-spacing:.14em; text-transform:uppercase; color:#D2A93D; margin:0 0 14px;
+  }
+  .madness-kicker::before, .madness-kicker::after{content:""; width:28px; height:1.5px; background:#D2A93D; opacity:.7; flex:0 0 auto}
+  .madness h2{font-size:clamp(32px,4.6vw,48px); font-weight:800; color:#fff}
+  .madness-tagline{
+    font-family:"Bricolage Grotesque",sans-serif; font-size:clamp(20px,2.8vw,26px); font-weight:700;
+    color:#D2A93D; margin:14px 0 0; line-height:1.25;
+  }
+  .madness-desc{color:#cfe5d8; font-size:17.5px; max-width:62ch; margin:16px auto 30px}
+  .btn-gold{background:#D2A93D; color:#0B3B2F}
+  .btn-gold:hover{background:#b8922e; box-shadow:0 10px 30px rgba(210,169,61,.4)}
+  .madness-dates{
+    font-family:"IBM Plex Mono",monospace; font-size:13px; letter-spacing:.04em;
+    color:#a9cbb8; margin:20px 0 0; line-height:1.6;
+  }
+
   /* Contact / footer */
   .contact-band{background:var(--green); color:#eef7f1; border-radius:22px; padding:48px}
   @media (prefers-color-scheme: dark){ .contact-band{background:#173527} }
@@ -1133,6 +1157,21 @@
           <span><span class="post-title">1,000 Followers — Everest</span><br /><span class="post-desc">The milestone post: Max celebrates the channel's first thousand at Everest base camp.</span></span>
           <span class="post-arrow" aria-hidden="true">→</span>
         </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOVEMBER MADNESS — contest banner, directing visitors to the
+       standalone bracket page -->
+  <section class="block madness" id="november-madness" aria-labelledby="madness-title">
+    <div class="wrap">
+      <div class="madness-in">
+        <p class="madness-kicker">Max's Friends · Community tournament</p>
+        <h2 id="madness-title">Max's November Madness</h2>
+        <p class="madness-tagline">4 pets enter, 1 pet earns a feature!</p>
+        <p class="madness-desc">Max's Friends is back with a tournament! Followers enter their pets — dogs, cats, sheep, birds, any pet — and the community votes in head-to-head polls. The champion earns a special video feature.</p>
+        <a class="btn btn-gold" href="/november-madness/">See the Bracket →</a>
+        <p class="madness-dates">Entries close Sunday, Nov 23 · Voting Nov 24–26 · Winner announced Nov 26</p>
       </div>
     </div>
   </section>
@@ -3130,7 +3169,7 @@
     try {
       var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var targets = document.querySelectorAll(
-        '.sec-head, .svc-row, .feature, .series-card, .step, .about-grid, .faq-item, .contact-band, .posts, .fx-const-panel, .stat'
+        '.sec-head, .svc-row, .feature, .series-card, .step, .about-grid, .faq-item, .contact-band, .posts, .fx-const-panel, .stat, .madness-in'
       );
       // Stat count-up (runs whether or not the reveal animation does)
       function countUp() {
