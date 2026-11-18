@@ -800,12 +800,12 @@
     .contact-band{padding:34px 26px}
     .stats{grid-template-columns:repeat(2,1fr)}
     .stat{border-left:none; padding-left:0}
-    /* Series cards stack: image on top (cropped to a 200px band,
-       biased toward the top of the frame so faces/crew stay visible),
-       text below. */
+    /* Series cards stack on narrow screens: full 3:4 image on top (no crop),
+       text below. A fixed-height band cropped the images badly on mobile
+       (Renovates lost the crew's heads and the houses) — show them whole. */
     .series-card{flex-direction:column}
-    .series-card .series-thumb{flex:none; height:200px; order:-1}
-    .series-card .series-thumb img{object-position:50% 20%}
+    .series-card .series-thumb{flex:none; aspect-ratio:3/4; height:auto; min-height:0; order:-1}
+    .series-card .series-thumb img{object-position:50% 50%}
   }
   @media (max-width: 680px){
     nav.main{
