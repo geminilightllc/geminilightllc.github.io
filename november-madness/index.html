@@ -59,15 +59,19 @@
   }
   .header-logo {
     color: var(--white);
-    font-weight: 700;
-    font-size: 1rem;
-    letter-spacing: 0.08em;
     text-decoration: none;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
   }
-  .header-logo .star { color: var(--gold); font-size: 1.2rem; }
+  .header-logo .logo-mark {
+    width: 46px; height: 46px; flex: 0 0 46px;
+    border-radius: 50%; object-fit: cover;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.25), 0 2px 8px rgba(0,0,0,0.35);
+  }
+  .header-logo .brand-text { display: flex; flex-direction: column; line-height: 1.2; }
+  .header-logo .brand-name { font-weight: 800; font-size: 19px; letter-spacing: 0.01em; }
+  .header-logo .brand-sub { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; color: rgba(255,255,255,0.7); text-transform: uppercase; }
   .header-home {
     color: var(--gold-light);
     text-decoration: none;
@@ -411,7 +415,13 @@
 <body>
 
 <header class="header">
-  <a href="https://geminilightllc.com/" class="header-logo"><span class="star">✦</span> GEMINI LIGHT</a>
+  <a href="https://geminilightllc.com/" class="header-logo">
+    <img src="../gemini-light-emblem.jpg" alt="Gemini Light logo — circular emblem with the Gemini constellation and a golden starburst" class="logo-mark">
+    <span class="brand-text">
+      <span class="brand-name">Gemini Light</span>
+      <span class="brand-sub">LLC · Digital Media</span>
+    </span>
+  </a>
   <a href="https://geminilightllc.com/" class="header-home">← Homepage</a>
 </header>
 
