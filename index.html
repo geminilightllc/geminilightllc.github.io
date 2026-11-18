@@ -479,10 +479,12 @@
   }
   .feature-photos .small{height:210px}
   /* Embedded looping videos (Surfer Max + Firefighter Max) replace the
-     two small real-life photos. Same slot size as the images they
-     replace. Videos autoplay muted + loop (browsers require muted for
+     two small real-life photos. The videos are 9:16 vertical, so the
+     panels use a 3/4 aspect ratio (taller than the old 210px photo
+     slots) to show ~75% of the frame instead of a thin ~43% band.
+     Videos autoplay muted + loop (browsers require muted for
      autoplay); the speaker button toggles sound on/off per video. */
-  .feature-video{position:relative; border-radius:var(--radius); overflow:hidden; background:#000}
+  .feature-video{position:relative; border-radius:var(--radius); overflow:hidden; background:#000; aspect-ratio:3/4; height:auto !important}
   .feature-video video{width:100%; height:100%; object-fit:cover; display:block; border-radius:var(--radius)}
   .feature-video .sound-toggle{
     position:absolute; bottom:10px; right:10px; z-index:2;
