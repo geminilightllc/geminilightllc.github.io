@@ -173,15 +173,20 @@
     mapReady = true;
   }
 
+  var LABEL_DIR = {'Canada': 'top', 'United States': 'bottom', 'Brazil': 'right', 'United Kingdom': 'right', 'India': 'right'};
+
   function renderMap(countries) {
     if (!mapReady || !layer) return;
     layer.clearLayers();
     countries.forEach(function (c) {
       var tip = '<b>' + c.name + '</b><br>~' + fmt(c.count) + ' &middot; ' + c.share.toFixed(1) + '%';
+      var r = radiusFor(c.share);
+      var dir = LABEL_DIR[c.name] || 'top';
+      var off = dir === 'top' ? [0, -r - 4] : dir === 'bottom' ? [0, r + 4] : [r + 4, 0];
       L.circleMarker([c.lat, c.lng], {
-        radius: radiusFor(c.share), color: GOLD_BRIGHT, weight: 1.5,
+        radius: r, color: GOLD_BRIGHT, weight: 1.5,
         fillColor: GOLD, fillOpacity: 0.55
-      }).bindTooltip(tip, { direction: 'top', className: 'gr-tip', offset: [0, -8] })
+      }).bindTooltip(tip, {permanent: true, direction: dir, className: 'gr-tip', offset: off})
         .bindPopup(tip).addTo(layer);
     });
   }
