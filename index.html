@@ -43,6 +43,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <style>
   :root{
     --bg:#faf7f1;
@@ -824,6 +826,72 @@
     .post-row{flex-wrap:wrap; gap:6px 14px}
     .post-arrow{display:none}
   }
+
+  /* ---------- Global Reach (audience heat map) ---------- */
+  /* Dark band at the bottom of the page, above the footer. Every rule is
+     scoped to #global-reach and the section carries its own palette
+     variables, so nothing here touches the rest of the site. */
+  #global-reach{
+    --bg:#050410; --green:#0B3B2F; --gold:#D2A93D; --gold-bright:#f2bc3c;
+    --gold-soft:#ffe9a8; --cream:#f5f1e6; --sage:#a9cbb8; --ink:#1c1708;
+    --card:#0d1f18; --line:rgba(210,169,61,.28);
+    background:var(--bg); color:var(--cream); padding:56px 0 72px;
+  }
+  #global-reach .kicker{font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:14px}
+  #global-reach .kicker::before{content:""; display:inline-block; width:28px; height:2px; background:var(--gold); vertical-align:middle; margin-right:10px}
+  #global-reach h2{font-family:"Bricolage Grotesque",sans-serif; font-size:clamp(30px,4.4vw,44px); font-weight:800; color:#fff; line-height:1.08; margin-bottom:14px}
+  #global-reach .lede{color:#cfe5d8; font-size:17px; max-width:640px; margin-bottom:28px}
+  #global-reach .filters{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:22px}
+  #global-reach .pill{appearance:none; border:1px solid var(--line); background:transparent; color:var(--cream); font-family:"Manrope",sans-serif; font-size:14px; font-weight:700; padding:10px 18px; border-radius:999px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; transition:background .15s,border-color .15s}
+  #global-reach .pill:hover{border-color:var(--gold)}
+  #global-reach .pill.active{background:var(--gold); border-color:var(--gold); color:var(--ink)}
+  #global-reach .dot{width:8px; height:8px; border-radius:50%; background:#5c665f; flex:none}
+  #global-reach .dot.live{background:#7ed491}
+  #global-reach .pill.active .dot.live{background:#0B3B2F}
+  #global-reach .total-strip{display:flex; flex-wrap:wrap; align-items:baseline; gap:10px 18px; margin-bottom:8px}
+  #global-reach .total-num{font-family:"Bricolage Grotesque",sans-serif; font-size:clamp(38px,6vw,56px); font-weight:800; color:var(--gold-bright); line-height:1}
+  #global-reach .total-label{font-size:16px; font-weight:700; color:#fff}
+  #global-reach .view-note{color:var(--sage); font-size:14px; max-width:720px; margin-bottom:20px}
+  #global-reach .map-shell{position:relative; border:1px solid var(--line); border-radius:16px; overflow:hidden; background:#0a0f1e}
+  #global-reach #map{height:440px; width:100%; background:#0a0f1e; z-index:1}
+  #global-reach .leaflet-container{font-family:"Manrope",sans-serif; background:#0a0f1e}
+  #global-reach .map-overlay{position:absolute; inset:0; z-index:500; display:none; align-items:center; justify-content:center; background:rgba(5,4,16,.82); padding:24px; text-align:center}
+  #global-reach .map-overlay.show{display:flex}
+  #global-reach .map-overlay .card{max-width:520px}
+  #global-reach .map-overlay h3{font-family:"Bricolage Grotesque",sans-serif; font-size:22px; color:#fff; margin-bottom:8px}
+  #global-reach .map-overlay p{color:#cfe5d8; font-size:15px}
+  #global-reach .leaflet-tooltip.gr-tip{background:#1c1708; border:1px solid var(--gold); color:var(--gold-soft); font-family:"Manrope",sans-serif; font-weight:700; font-size:13px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,.45)}
+  #global-reach .leaflet-tooltip.gr-tip::before{display:none}
+  #global-reach .leaflet-popup-content-wrapper{background:#1c1708; color:var(--cream); border:1px solid var(--gold); border-radius:10px; font-family:"Manrope",sans-serif}
+  #global-reach .leaflet-popup-content{margin:12px 14px; font-size:14px; line-height:1.5}
+  #global-reach .leaflet-popup-content b{color:var(--gold-bright)}
+  #global-reach .leaflet-popup-tip{background:#1c1708; border:1px solid var(--gold)}
+  #global-reach .leaflet-control-attribution{background:rgba(5,4,16,.7)!important; color:#8f8672!important; font-size:10px!important}
+  #global-reach .leaflet-control-attribution a{color:#a9cbb8!important}
+  #global-reach .ranked{margin-top:28px; border:1px solid var(--line); border-radius:16px; overflow:hidden}
+  #global-reach .ranked-head{padding:16px 20px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap}
+  #global-reach .ranked-head h3{font-family:"Bricolage Grotesque",sans-serif; font-size:20px; color:#fff}
+  #global-reach .ranked-head span{font-family:"IBM Plex Mono",monospace; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--sage)}
+  #global-reach table{width:100%; border-collapse:collapse; font-size:15px}
+  #global-reach th{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--sage); text-align:left; padding:12px 20px; border-bottom:1px solid var(--line); font-weight:600}
+  #global-reach th.num, #global-reach td.num{text-align:right; white-space:nowrap}
+  #global-reach td{padding:13px 20px; border-bottom:1px solid rgba(210,169,61,.12); vertical-align:middle}
+  #global-reach tr:last-child td{border-bottom:none}
+  #global-reach tr.rest td{color:#b3a888; font-style:italic}
+  #global-reach .bar{height:8px; background:rgba(210,169,61,.18); border-radius:99px; overflow:hidden; min-width:90px}
+  #global-reach .bar > div{height:100%; background:linear-gradient(90deg,var(--gold),var(--gold-bright)); border-radius:99px}
+  #global-reach .rank{font-family:"IBM Plex Mono",monospace; color:var(--gold); font-weight:600; width:44px}
+  #global-reach .country{font-weight:700; color:#fff}
+  #global-reach .meta{margin-top:20px; color:#8f8672; font-size:13px; line-height:1.6}
+  #global-reach .meta b{color:var(--sage); font-weight:600}
+  #global-reach .loading, #global-reach .error{padding:24px; text-align:center; color:#cfe5d8; font-size:16px}
+  #global-reach .error{color:#ffb4a8}
+  @media (max-width:640px){
+    #global-reach #map{height:340px}
+    #global-reach th.bar-col, #global-reach td.bar-col{display:none}
+    #global-reach td{padding:11px 14px}
+    #global-reach th{padding:10px 14px}
+  }
 </style>
 </head>
 <body>
@@ -1411,6 +1479,231 @@
   </section>
 
 </main>
+
+<section id="global-reach" aria-label="Global Reach">
+  <div class="wrap">
+    <p class="kicker">Global Reach</p>
+    <h2>A global audience</h2>
+    <p class="lede">Where the Gemini Light audience lives &mdash; followers and visitors, across every platform. Bigger circle, bigger audience.</p>
+    <div class="filters" id="filters" role="tablist" aria-label="Platform filter"></div>
+    <div class="total-strip">
+      <span class="total-num" id="total-num">&hellip;</span>
+      <span class="total-label" id="total-label"></span>
+    </div>
+    <p class="view-note" id="view-note"></p>
+    <div class="map-shell">
+      <div id="map" aria-label="World map of audience by country"></div>
+      <div class="map-overlay" id="map-overlay"><div class="card"><h3 id="overlay-title"></h3><p id="overlay-text"></p></div></div>
+    </div>
+    <div class="ranked" id="ranked">
+      <div class="ranked-head"><h3 id="ranked-title">Top countries</h3><span id="ranked-sub"></span></div>
+      <div id="ranked-body"></div>
+    </div>
+    <p class="meta" id="meta-line"></p>
+    <p class="meta">How it stays fresh: this section reads its numbers from <b>audience-data.json</b>, fetched live &mdash; updating that file refreshes the map, no page edits needed.</p>
+    <div class="loading" id="loading">Loading audience data&hellip;</div>
+  </div>
+</section>
+<script>
+(function () {
+  var DATA_URL = 'audience-data.json';
+  var FILTERS = [
+    { id: 'all', label: 'All platforms' },
+    { id: 'instagram', label: 'Instagram' },
+    { id: 'facebook', label: 'Facebook' },
+    { id: 'tiktok', label: 'TikTok' },
+    { id: 'ga4', label: 'Google Analytics' }
+  ];
+  var GOLD = '#D2A93D', GOLD_BRIGHT = '#f2bc3c';
+  var data = null, map = null, layer = null, current = 'all';
+
+  function fmt(n) { return n.toLocaleString('en-US'); }
+  function liveSources() {
+    return Object.keys(data.sources).filter(function (k) {
+      var s = data.sources[k];
+      return s.status === 'live' && s.countries && s.countries.length;
+    });
+  }
+  function combinedView() {
+    var live = liveSources();
+    if (live.length === 1) {
+      // Merging a single source must be identity: keep its stored shares.
+      var only = data.sources[live[0]];
+      return { total: only.total,
+               countries: only.countries.slice().sort(function (a, b) { return b.count - a.count; }),
+               restOfWorld: only.restOfWorld || { count: 0, share: 0 } };
+    }
+    var total = 0, restCount = 0, byCode = {};
+    liveSources().forEach(function (k) {
+      var s = data.sources[k];
+      total += s.total || 0;
+      s.countries.forEach(function (c) {
+        if (!byCode[c.code]) byCode[c.code] = { code: c.code, name: c.name, lat: c.lat, lng: c.lng, count: 0 };
+        byCode[c.code].count += c.count || 0;
+      });
+      if (s.restOfWorld) restCount += s.restOfWorld.count || 0;
+    });
+    var countries = Object.keys(byCode).map(function (code) {
+      var c = byCode[code];
+      return { code: c.code, name: c.name, lat: c.lat, lng: c.lng, count: c.count,
+               share: total ? Math.round(1000 * c.count / total) / 10 : 0 };
+    }).sort(function (a, b) { return b.count - a.count; });
+    return { total: total, countries: countries,
+             restOfWorld: { count: restCount, share: total ? Math.round(1000 * restCount / total) / 10 : 0 } };
+  }
+  function radiusFor(share) { return 6 + 6.2 * Math.sqrt(Math.max(share, 0)); }
+
+  function initMap() {
+    map = L.map('map', {
+      center: [22, 8], zoom: 2, minZoom: 2, maxZoom: 5, zoomSnap: 0.5,
+      scrollWheelZoom: false, worldCopyJump: true,
+      maxBounds: [[-62, -200], [88, 200]], maxBoundsViscosity: 1.0
+    });
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Esri, HERE, Garmin, OpenStreetMap contributors, and the GIS user community',
+      maxZoom: 16
+    }).addTo(map);
+    layer = L.layerGroup().addTo(map);
+    map.on('click', function () { map.scrollWheelZoom.enable(); });
+    map.on('mouseout', function () { map.scrollWheelZoom.disable(); });
+  }
+
+  var LABEL_DIR = {'Canada': 'top', 'United States': 'bottom', 'Brazil': 'right', 'United Kingdom': 'right', 'India': 'right'};
+
+  function renderMap(countries) {
+    layer.clearLayers();
+    countries.forEach(function (c) {
+      var tip = '<b>' + c.name + '</b><br>~' + fmt(c.count) + ' &middot; ' + c.share.toFixed(1) + '%';
+      var r = radiusFor(c.share);
+      var dir = LABEL_DIR[c.name] || 'top';
+      var off = dir === 'top' ? [0, -r - 4] : dir === 'bottom' ? [0, r + 4] : [r + 4, 0];
+      L.circleMarker([c.lat, c.lng], {
+        radius: r, color: GOLD_BRIGHT, weight: 1.5,
+        fillColor: GOLD, fillOpacity: 0.55
+      }).bindTooltip(tip, {permanent: true, direction: dir, className: 'gr-tip', offset: off})
+        .bindPopup(tip).addTo(layer);
+    });
+  }
+
+  function renderTable(view, unitLabel) {
+    var body = document.getElementById('ranked-body');
+    if (!view.countries.length) { body.innerHTML = ''; return; }
+    var maxShare = Math.max.apply(null, view.countries.map(function (c) { return c.share; }));
+    var rows = view.countries.map(function (c, i) {
+      return '<tr><td class="rank">' + (i + 1) + '</td><td class="country">' + c.name + '</td>' +
+        '<td class="bar-col"><div class="bar"><div style="width:' + Math.round(100 * c.share / maxShare) + '%"></div></div></td>' +
+        '<td class="num">~' + fmt(c.count) + '</td><td class="num">' + c.share.toFixed(1) + '%</td></tr>';
+    }).join('');
+    if (view.restOfWorld && view.restOfWorld.count > 0) {
+      rows += '<tr class="rest"><td class="rank">&mdash;</td><td>Rest of world</td>' +
+        '<td class="bar-col"><div class="bar"><div style="width:' + Math.round(100 * view.restOfWorld.share / maxShare) + '%"></div></div></td>' +
+        '<td class="num">~' + fmt(view.restOfWorld.count) + '</td><td class="num">' + view.restOfWorld.share.toFixed(1) + '%</td></tr>';
+    }
+    body.innerHTML = '<table><thead><tr><th>#</th><th>Country</th><th class="bar-col">Share</th><th class="num">' +
+      unitLabel + '</th><th class="num">% of total</th></tr></thead><tbody>' + rows + '</tbody></table>';
+  }
+
+  function setFilter(id) {
+    current = id;
+    document.querySelectorAll('#global-reach .pill').forEach(function (p) {
+      var on = p.dataset.filter === id;
+      p.classList.toggle('active', on);
+      p.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    var overlay = document.getElementById('map-overlay');
+    var ranked = document.getElementById('ranked');
+    if (id === 'all') {
+      var view = combinedView();
+      var live = liveSources().map(function (k) { return data.sources[k].label; });
+      var pending = Object.keys(data.sources).filter(function (k) { return data.sources[k].status !== 'live'; })
+        .map(function (k) { return data.sources[k].label; });
+      document.getElementById('total-num').textContent = fmt(view.total);
+      document.getElementById('total-label').textContent = 'combined audience';
+      var note = 'Combined total across platforms \u2014 followers + visitors, not unique people.';
+      if (pending.length) note += ' Currently ' + live.join(' + ') + ' only: ' + pending.join(', ') + ' join once connected.';
+      document.getElementById('view-note').textContent = note;
+      document.getElementById('ranked-title').textContent = 'Top countries \u2014 all platforms';
+      document.getElementById('ranked-sub').textContent = live.join(' + ');
+      overlay.classList.remove('show');
+      ranked.style.display = '';
+      renderMap(view.countries);
+      renderTable(view, 'Audience');
+    } else {
+      var s = data.sources[id];
+      document.getElementById('ranked-title').textContent = 'Top countries \u2014 ' + s.label;
+      if (s.status === 'live' && s.countries && s.countries.length) {
+        document.getElementById('total-num').textContent = fmt(s.total);
+        document.getElementById('total-label').textContent = s.metric.toLowerCase();
+        document.getElementById('view-note').textContent = s.label + ' ' + s.metric.toLowerCase() +
+          ' by country. Counts are rounded estimates (share \u00d7 ' + s.metric.toLowerCase() + ' total).';
+        document.getElementById('ranked-sub').textContent = s.window || '';
+        overlay.classList.remove('show');
+        ranked.style.display = '';
+        renderMap(s.countries);
+        renderTable({ countries: s.countries, restOfWorld: s.restOfWorld }, s.metric);
+      } else {
+        document.getElementById('total-num').textContent = '\u2014';
+        document.getElementById('total-label').textContent = s.metric.toLowerCase() + ' \u2014 not connected yet';
+        document.getElementById('view-note').textContent = s.note || '';
+        document.getElementById('overlay-title').textContent = s.label + ' is coming soon';
+        document.getElementById('overlay-text').textContent = s.note || '';
+        overlay.classList.add('show');
+        ranked.style.display = 'none';
+        layer.clearLayers();
+      }
+    }
+  }
+
+  function renderFilters() {
+    var wrap = document.getElementById('filters');
+    wrap.innerHTML = '';
+    FILTERS.forEach(function (f) {
+      var b = document.createElement('button');
+      b.className = 'pill' + (f.id === current ? ' active' : '');
+      b.type = 'button';
+      b.setAttribute('role', 'tab');
+      b.dataset.filter = f.id;
+      var isLive = f.id === 'all'
+        ? liveSources().length > 0
+        : (data.sources[f.id] && data.sources[f.id].status === 'live');
+      b.innerHTML = '<span class="dot' + (isLive ? ' live' : '') + '"></span>' + f.label;
+      b.addEventListener('click', function () { setFilter(f.id); });
+      wrap.appendChild(b);
+    });
+  }
+
+  function renderMeta() {
+    var parts = liveSources().map(function (k) {
+      var s = data.sources[k];
+      return s.label + ' data as of ' + (s.asOf || data.asOf);
+    });
+    document.getElementById('meta-line').innerHTML = '<b>Data as of ' + data.asOf + '.</b> ' +
+      parts.join(' &middot; ') + ' &middot; Counts are rounded estimates (share \u00d7 total).';
+  }
+
+  function fail(msg) {
+    var el = document.getElementById('loading');
+    el.className = 'error';
+    el.textContent = msg;
+    document.getElementById('view-note').textContent = msg;
+  }
+
+  fetch(DATA_URL)
+    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function (json) {
+      data = json;
+      var loading = document.getElementById('loading');
+      if (loading) loading.remove();
+      initMap();
+      renderFilters();
+      renderMeta();
+      setFilter('all');
+    })
+    .catch(function () {
+      fail('Audience data is temporarily unavailable. Please check back soon.');
+    });
+})();
+</script>
 
 <footer class="site">
   <div class="wrap">
