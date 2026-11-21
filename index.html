@@ -1481,11 +1481,12 @@
 
 </main>
 
-<section id="global-reach" aria-label="Instagram audience map">
+<section id="global-reach" aria-label="Global Reach">
   <div class="wrap">
     <p class="kicker">Global Reach</p>
-    <h2>Max&rsquo;s Instagram audience, worldwide</h2>
-    <p class="lede">Where @max.lifecoach_dog&rsquo;s Instagram followers live. Bigger circle, bigger audience.</p>
+    <h2>Max&rsquo;s audience, worldwide</h2>
+    <p class="lede">Where @max.lifecoach_dog&rsquo;s Instagram followers and geminilightllc.com visitors live. Bigger circle, bigger audience.</p>
+    <div class="filters" id="filters" role="tablist" aria-label="Source filter"></div>
     <p class="view-note" id="view-note"></p>
     <div class="map-shell">
       <div id="map" aria-label="World map of audience by country"></div>
@@ -1503,8 +1504,12 @@
 <script>
 (function () {
   var DATA_URL = 'audience-data.json';
+  var FILTERS = [
+    { id: 'instagram', label: 'Instagram' },
+    { id: 'ga4', label: 'Website' }
+  ];
   var GOLD = '#D2A93D', GOLD_BRIGHT = '#f2bc3c';
-  var data = null, map = null, layer = null;
+  var data = null, map = null, layer = null, current = 'instagram';
 
   function fmt(n) { return n.toLocaleString('en-US'); }
   function liveSources() {
@@ -1559,59 +1564,87 @@
 
   var LABEL_DIR = {'Canada': 'top', 'United States': 'bottom', 'Brazil': 'right', 'United Kingdom': 'right', 'India': 'right'};
 
-  function renderMap(countries) {
+  function renderMap(countries, exact) {
     layer.clearLayers();
-    countries.forEach(function (c) {
-      var tip = '<b>' + c.name + '</b><br>~' + fmt(c.count) + ' &middot; ' + c.share.toFixed(1) + '%';
+    var prefix = exact ? '' : '~';
+    countries.forEach(function (c, i) {
+      var tip = '<b>' + c.name + '</b><br>' + prefix + fmt(c.count) + ' &middot; ' + c.share.toFixed(1) + '%';
       var r = radiusFor(c.share);
       var dir = LABEL_DIR[c.name] || 'top';
       var off = dir === 'top' ? [0, -r - 4] : dir === 'bottom' ? [0, r + 4] : [r + 4, 0];
       L.circleMarker([c.lat, c.lng], {
         radius: r, color: GOLD_BRIGHT, weight: 1.5,
         fillColor: GOLD, fillOpacity: 0.55
-      }).bindTooltip(tip, {permanent: true, direction: dir, className: 'gr-tip', offset: off})
+      }).bindTooltip(tip, {permanent: i < 5, direction: dir, className: 'gr-tip', offset: off})
         .bindPopup(tip).addTo(layer);
     });
   }
 
-  function renderTable(view, unitLabel) {
+  function renderTable(view, unitLabel, exact) {
     var body = document.getElementById('ranked-body');
     if (!view.countries.length) { body.innerHTML = ''; return; }
+    var prefix = exact ? '' : '~';
     var maxShare = Math.max.apply(null, view.countries.map(function (c) { return c.share; }));
     var rows = view.countries.map(function (c, i) {
       return '<tr><td class="rank">' + (i + 1) + '</td><td class="country">' + c.name + '</td>' +
         '<td class="bar-col"><div class="bar"><div style="width:' + Math.round(100 * c.share / maxShare) + '%"></div></div></td>' +
-        '<td class="num">~' + fmt(c.count) + '</td><td class="num">' + c.share.toFixed(1) + '%</td></tr>';
+        '<td class="num">' + prefix + fmt(c.count) + '</td><td class="num">' + c.share.toFixed(1) + '%</td></tr>';
     }).join('');
     if (view.restOfWorld && view.restOfWorld.count > 0) {
       rows += '<tr class="rest"><td class="rank">&mdash;</td><td>Rest of world</td>' +
         '<td class="bar-col"><div class="bar"><div style="width:' + Math.round(100 * view.restOfWorld.share / maxShare) + '%"></div></div></td>' +
-        '<td class="num">~' + fmt(view.restOfWorld.count) + '</td><td class="num">' + view.restOfWorld.share.toFixed(1) + '%</td></tr>';
+        '<td class="num">' + prefix + fmt(view.restOfWorld.count) + '</td><td class="num">' + view.restOfWorld.share.toFixed(1) + '%</td></tr>';
     }
     body.innerHTML = '<table><thead><tr><th>#</th><th>Country</th><th class="bar-col">Share</th><th class="num">' +
       unitLabel + '</th><th class="num">% of total</th></tr></thead><tbody>' + rows + '</tbody></table>';
   }
 
-  function renderInstagram() {
-    var s = data.sources.instagram;
+  function setFilter(id) {
+    current = id;
+    document.querySelectorAll('#global-reach .pill').forEach(function (p) {
+      var on = p.dataset.filter === id;
+      p.classList.toggle('active', on);
+      p.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    var s = data.sources[id];
+    var display = id === 'ga4' ? 'Website' : s.label;
     var overlay = document.getElementById('map-overlay');
     var ranked = document.getElementById('ranked');
-    document.getElementById('ranked-title').textContent = 'Top countries \u2014 Instagram';
+    document.getElementById('ranked-title').textContent = 'Top countries \u2014 ' + display;
     if (s.status === 'live' && s.countries && s.countries.length) {
-      document.getElementById('view-note').textContent = 'Instagram followers by country. Counts are rounded estimates (share \u00d7 follower total).';
+      document.getElementById('view-note').textContent = id === 'ga4'
+        ? 'Website visits by country. Exact counts from Google Analytics, last 28 days.'
+        : 'Instagram followers by country. Counts are rounded estimates (share \u00d7 follower total).';
       document.getElementById('ranked-sub').textContent = s.window || '';
       overlay.classList.remove('show');
       ranked.style.display = '';
-      renderMap(s.countries);
-      renderTable({ countries: s.countries, restOfWorld: s.restOfWorld }, s.metric);
+      renderMap(s.countries, id === 'ga4');
+      renderTable({ countries: s.countries, restOfWorld: s.restOfWorld },
+        id === 'ga4' ? 'Visits' : s.metric, id === 'ga4');
     } else {
       document.getElementById('view-note').textContent = s.note || '';
-      document.getElementById('overlay-title').textContent = 'Instagram data is coming soon';
+      document.getElementById('overlay-title').textContent = display + ' data is coming soon';
       document.getElementById('overlay-text').textContent = s.note || '';
       overlay.classList.add('show');
       ranked.style.display = 'none';
       layer.clearLayers();
     }
+  }
+
+  function renderFilters() {
+    var wrap = document.getElementById('filters');
+    wrap.innerHTML = '';
+    FILTERS.forEach(function (f) {
+      var b = document.createElement('button');
+      b.className = 'pill' + (f.id === current ? ' active' : '');
+      b.type = 'button';
+      b.setAttribute('role', 'tab');
+      b.dataset.filter = f.id;
+      var isLive = data.sources[f.id] && data.sources[f.id].status === 'live';
+      b.innerHTML = '<span class="dot' + (isLive ? ' live' : '') + '"></span>' + f.label;
+      b.addEventListener('click', function () { setFilter(f.id); });
+      wrap.appendChild(b);
+    });
   }
 
   function renderMeta() {
@@ -1637,8 +1670,9 @@
       var loading = document.getElementById('loading');
       if (loading) loading.remove();
       initMap();
+      renderFilters();
       renderMeta();
-      renderInstagram();
+      setFilter('instagram');
     })
     .catch(function () {
       fail('Audience data is temporarily unavailable. Please check back soon.');
