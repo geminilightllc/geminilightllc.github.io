@@ -1567,16 +1567,61 @@
   function renderMap(countries, exact) {
     layer.clearLayers();
     var prefix = exact ? '' : '~';
+    // Fan out labels that would otherwise pile up: group the permanent labels
+    // (top 5) whose anchors sit close together on screen, then give each label
+    // in a cluster its own direction, most prominent first. Singletons keep
+    // their hand-tuned LABEL_DIR direction.
+    var pts = countries.map(function (c) { return map.latLngToContainerPoint([c.lat, c.lng]); });
+    var CLUSTER_PX = 130;
+    var FAN_DIRS = ['top', 'right', 'bottom', 'left'];
+    var dirFor = {}, clustered = {};
+    var seen = {};
+    countries.forEach(function (c, i) {
+      if (i >= 5 || seen[i]) return;
+      var cluster = [i];
+      seen[i] = true;
+      var grew = true;
+      while (grew) {
+        grew = false;
+        countries.forEach(function (c2, j) {
+          if (j >= 5 || seen[j]) return;
+          var near = cluster.some(function (k) {
+            var dx = pts[j].x - pts[k].x, dy = pts[j].y - pts[k].y;
+            return Math.sqrt(dx * dx + dy * dy) < CLUSTER_PX;
+          });
+          if (near) { cluster.push(j); seen[j] = true; grew = true; }
+        });
+      }
+      if (cluster.length === 1) {
+        dirFor[i] = LABEL_DIR[c.name] || 'top';
+      } else {
+        cluster.forEach(function (idx, k) {
+          dirFor[idx] = FAN_DIRS[k % FAN_DIRS.length];
+          clustered[idx] = true;
+        });
+      }
+    });
+    var markers = [];
     countries.forEach(function (c, i) {
       var tip = '<b>' + c.name + '</b><br>' + prefix + fmt(c.count) + ' &middot; ' + c.share.toFixed(1) + '%';
       var r = radiusFor(c.share);
-      var dir = LABEL_DIR[c.name] || 'top';
-      var off = dir === 'top' ? [0, -r - 4] : dir === 'bottom' ? [0, r + 4] : [r + 4, 0];
-      L.circleMarker([c.lat, c.lng], {
+      var dir = dirFor[i] || LABEL_DIR[c.name] || 'top';
+      var clearance = clustered[i] ? 14 : 4;
+      var off = dir === 'top' ? [0, -r - clearance] :
+                dir === 'bottom' ? [0, r + clearance] :
+                dir === 'left' ? [-r - clearance, 0] : [r + clearance, 0];
+      var m = L.circleMarker([c.lat, c.lng], {
         radius: r, color: GOLD_BRIGHT, weight: 1.5,
         fillColor: GOLD, fillOpacity: 0.55
       }).bindTooltip(tip, {permanent: i < 5, direction: dir, className: 'gr-tip', offset: off})
         .bindPopup(tip).addTo(layer);
+      markers.push(m);
+    });
+    // Most prominent label in front: z-index by share rank (array is share-desc).
+    markers.forEach(function (m, i) {
+      var t = m.getTooltip();
+      var el = t && t.getElement();
+      if (el) el.style.zIndex = 1000 - i;
     });
   }
 
@@ -1663,7 +1708,7 @@
     document.getElementById('view-note').textContent = msg;
   }
 
-  fetch(DATA_URL)
+  fetch(DATA_URL, {cache: 'no-cache'})
     .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
     .then(function (json) {
       data = json;
