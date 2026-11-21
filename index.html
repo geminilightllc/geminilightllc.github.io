@@ -1480,16 +1480,11 @@
 
 </main>
 
-<section id="global-reach" aria-label="Global Reach">
+<section id="global-reach" aria-label="Instagram audience map">
   <div class="wrap">
     <p class="kicker">Global Reach</p>
-    <h2>A global audience</h2>
-    <p class="lede">Where the Gemini Light audience lives &mdash; followers and visitors, across every platform. Bigger circle, bigger audience.</p>
-    <div class="filters" id="filters" role="tablist" aria-label="Platform filter"></div>
-    <div class="total-strip">
-      <span class="total-num" id="total-num">&hellip;</span>
-      <span class="total-label" id="total-label"></span>
-    </div>
+    <h2>Max&rsquo;s Instagram audience, worldwide</h2>
+    <p class="lede">Where @max.lifecoach_dog&rsquo;s Instagram followers live. Bigger circle, bigger audience.</p>
     <p class="view-note" id="view-note"></p>
     <div class="map-shell">
       <div id="map" aria-label="World map of audience by country"></div>
@@ -1507,15 +1502,8 @@
 <script>
 (function () {
   var DATA_URL = 'audience-data.json';
-  var FILTERS = [
-    { id: 'all', label: 'All platforms' },
-    { id: 'instagram', label: 'Instagram' },
-    { id: 'facebook', label: 'Facebook' },
-    { id: 'tiktok', label: 'TikTok' },
-    { id: 'ga4', label: 'Google Analytics' }
-  ];
   var GOLD = '#D2A93D', GOLD_BRIGHT = '#f2bc3c';
-  var data = null, map = null, layer = null, current = 'all';
+  var data = null, map = null, layer = null;
 
   function fmt(n) { return n.toLocaleString('en-US'); }
   function liveSources() {
@@ -1603,73 +1591,26 @@
       unitLabel + '</th><th class="num">% of total</th></tr></thead><tbody>' + rows + '</tbody></table>';
   }
 
-  function setFilter(id) {
-    current = id;
-    document.querySelectorAll('#global-reach .pill').forEach(function (p) {
-      var on = p.dataset.filter === id;
-      p.classList.toggle('active', on);
-      p.setAttribute('aria-selected', on ? 'true' : 'false');
-    });
+  function renderInstagram() {
+    var s = data.sources.instagram;
     var overlay = document.getElementById('map-overlay');
     var ranked = document.getElementById('ranked');
-    if (id === 'all') {
-      var view = combinedView();
-      var live = liveSources().map(function (k) { return data.sources[k].label; });
-      var pending = Object.keys(data.sources).filter(function (k) { return data.sources[k].status !== 'live'; })
-        .map(function (k) { return data.sources[k].label; });
-      document.getElementById('total-num').textContent = fmt(view.total);
-      document.getElementById('total-label').textContent = 'combined audience';
-      var note = 'Combined total across platforms \u2014 followers + visitors, not unique people.';
-      if (pending.length) note += ' Currently ' + live.join(' + ') + ' only: ' + pending.join(', ') + ' join once connected.';
-      document.getElementById('view-note').textContent = note;
-      document.getElementById('ranked-title').textContent = 'Top countries \u2014 all platforms';
-      document.getElementById('ranked-sub').textContent = live.join(' + ');
+    document.getElementById('ranked-title').textContent = 'Top countries \u2014 Instagram';
+    if (s.status === 'live' && s.countries && s.countries.length) {
+      document.getElementById('view-note').textContent = 'Instagram followers by country. Counts are rounded estimates (share \u00d7 follower total).';
+      document.getElementById('ranked-sub').textContent = s.window || '';
       overlay.classList.remove('show');
       ranked.style.display = '';
-      renderMap(view.countries);
-      renderTable(view, 'Audience');
+      renderMap(s.countries);
+      renderTable({ countries: s.countries, restOfWorld: s.restOfWorld }, s.metric);
     } else {
-      var s = data.sources[id];
-      document.getElementById('ranked-title').textContent = 'Top countries \u2014 ' + s.label;
-      if (s.status === 'live' && s.countries && s.countries.length) {
-        document.getElementById('total-num').textContent = fmt(s.total);
-        document.getElementById('total-label').textContent = s.metric.toLowerCase();
-        document.getElementById('view-note').textContent = s.label + ' ' + s.metric.toLowerCase() +
-          ' by country. Counts are rounded estimates (share \u00d7 ' + s.metric.toLowerCase() + ' total).';
-        document.getElementById('ranked-sub').textContent = s.window || '';
-        overlay.classList.remove('show');
-        ranked.style.display = '';
-        renderMap(s.countries);
-        renderTable({ countries: s.countries, restOfWorld: s.restOfWorld }, s.metric);
-      } else {
-        document.getElementById('total-num').textContent = '\u2014';
-        document.getElementById('total-label').textContent = s.metric.toLowerCase() + ' \u2014 not connected yet';
-        document.getElementById('view-note').textContent = s.note || '';
-        document.getElementById('overlay-title').textContent = s.label + ' is coming soon';
-        document.getElementById('overlay-text').textContent = s.note || '';
-        overlay.classList.add('show');
-        ranked.style.display = 'none';
-        layer.clearLayers();
-      }
+      document.getElementById('view-note').textContent = s.note || '';
+      document.getElementById('overlay-title').textContent = 'Instagram data is coming soon';
+      document.getElementById('overlay-text').textContent = s.note || '';
+      overlay.classList.add('show');
+      ranked.style.display = 'none';
+      layer.clearLayers();
     }
-  }
-
-  function renderFilters() {
-    var wrap = document.getElementById('filters');
-    wrap.innerHTML = '';
-    FILTERS.forEach(function (f) {
-      var b = document.createElement('button');
-      b.className = 'pill' + (f.id === current ? ' active' : '');
-      b.type = 'button';
-      b.setAttribute('role', 'tab');
-      b.dataset.filter = f.id;
-      var isLive = f.id === 'all'
-        ? liveSources().length > 0
-        : (data.sources[f.id] && data.sources[f.id].status === 'live');
-      b.innerHTML = '<span class="dot' + (isLive ? ' live' : '') + '"></span>' + f.label;
-      b.addEventListener('click', function () { setFilter(f.id); });
-      wrap.appendChild(b);
-    });
   }
 
   function renderMeta() {
@@ -1695,9 +1636,8 @@
       var loading = document.getElementById('loading');
       if (loading) loading.remove();
       initMap();
-      renderFilters();
       renderMeta();
-      setFilter('all');
+      renderInstagram();
     })
     .catch(function () {
       fail('Audience data is temporarily unavailable. Please check back soon.');
