@@ -878,6 +878,10 @@
   #global-reach td{padding:13px 20px; border-bottom:1px solid rgba(210,169,61,.12); vertical-align:middle}
   #global-reach tr:last-child td{border-bottom:none}
   #global-reach tr.rest td{color:#b3a888; font-style:italic}
+  #global-reach tr.total td{border-top:2px solid var(--gold); font-weight:700; color:#fff}
+  #global-reach td.num.up{color:var(--sage)}
+  #global-reach td.num.down{color:#ffb4a8}
+  #global-reach .compare-note{padding:12px 20px; margin:0; color:#8f8672; font-size:12px; border-top:1px solid var(--line)}
   #global-reach .bar{height:8px; background:rgba(210,169,61,.18); border-radius:99px; overflow:hidden; min-width:90px}
   #global-reach .bar > div{height:100%; background:linear-gradient(90deg,var(--gold),var(--gold-bright)); border-radius:99px}
   #global-reach .rank{font-family:"IBM Plex Mono",monospace; color:var(--gold); font-weight:600; width:44px}
@@ -1504,12 +1508,13 @@
 <script>
 (function () {
   var DATA_URL = 'audience-data.json';
+  var HISTORY_URL = 'audience-history.json';
   var FILTERS = [
     { id: 'instagram', label: 'Instagram' },
     { id: 'ga4', label: 'Website' }
   ];
   var GOLD = '#D2A93D', GOLD_BRIGHT = '#f2bc3c';
-  var data = null, map = null, layer = null, current = 'instagram';
+  var data = null, history = null, map = null, layer = null, current = 'instagram';
 
   function fmt(n) { return n.toLocaleString('en-US'); }
   function liveSources() {
@@ -1627,23 +1632,76 @@
     });
   }
 
-  function renderTable(view, unitLabel, exact) {
+  function comparisonFor(srcId, asOf) {
+    // Snapshot nearest 28 days before the current data date, if one exists.
+    if (!history || !history.snapshots || !history.snapshots.length) return null;
+    var target = Date.parse(asOf) - 28 * 86400000;
+    var best = null, bestDiff = Infinity;
+    history.snapshots.forEach(function (snap) {
+      var d = Math.abs(Date.parse(snap.date) - target);
+      if (d < bestDiff) { bestDiff = d; best = snap; }
+    });
+    if (!best || bestDiff > 4 * 86400000 || !best[srcId]) return null;
+    var byCode = {};
+    (best[srcId].countries || []).forEach(function (c) { byCode[c.code] = c.count; });
+    return { date: best.date, byCode: byCode,
+             rest: best[srcId].restOfWorld ? best[srcId].restOfWorld.count : 0,
+             total: best[srcId].total };
+  }
+
+  function changeCells(cur, old, prefix) {
+    // old === null: no comparison snapshot yet. old === undefined: country is new since then.
+    if (old === null) return '<td class="num">&mdash;</td><td class="num">&mdash;</td>';
+    if (old === undefined) {
+      return '<td class="num up">+' + prefix + fmt(cur) + '</td><td class="num up">new</td>';
+    }
+    var diff = cur - old;
+    var cls = diff > 0 ? ' up' : diff < 0 ? ' down' : '';
+    var chg = diff === 0 ? '0' : (diff > 0 ? '+' : '&minus;') + prefix + fmt(Math.abs(diff));
+    var pct;
+    if (old === 0) pct = diff > 0 ? 'new' : '&mdash;';
+    else if (diff === 0) pct = '0.0%';
+    else pct = (diff > 0 ? '+' : '&minus;') + Math.abs(100 * diff / old).toFixed(1) + '%';
+    return '<td class="num' + cls + '">' + chg + '</td><td class="num' + cls + '">' + pct + '</td>';
+  }
+
+  function fmtDate(iso) {
+    return new Date(iso + 'T12:00:00').toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
+  }
+
+  function renderTable(srcId, s, unitLabel, exact) {
     var body = document.getElementById('ranked-body');
-    if (!view.countries.length) { body.innerHTML = ''; return; }
+    if (!s.countries.length) { body.innerHTML = ''; return; }
     var prefix = exact ? '' : '~';
-    var maxShare = Math.max.apply(null, view.countries.map(function (c) { return c.share; }));
-    var rows = view.countries.map(function (c, i) {
+    var comp = comparisonFor(srcId, s.asOf || data.asOf);
+    var maxShare = Math.max.apply(null, s.countries.map(function (c) { return c.share; }));
+    var rows = s.countries.map(function (c, i) {
       return '<tr><td class="rank">' + (i + 1) + '</td><td class="country">' + c.name + '</td>' +
         '<td class="bar-col"><div class="bar"><div style="width:' + Math.round(100 * c.share / maxShare) + '%"></div></div></td>' +
-        '<td class="num">' + prefix + fmt(c.count) + '</td><td class="num">' + c.share.toFixed(1) + '%</td></tr>';
+        '<td class="num">' + prefix + fmt(c.count) + '</td><td class="num">' + c.share.toFixed(1) + '%</td>' +
+        changeCells(c.count, comp ? comp.byCode[c.code] : null, prefix) + '</tr>';
     }).join('');
-    if (view.restOfWorld && view.restOfWorld.count > 0) {
+    if (s.restOfWorld && s.restOfWorld.count > 0) {
       rows += '<tr class="rest"><td class="rank">&mdash;</td><td>Rest of world</td>' +
-        '<td class="bar-col"><div class="bar"><div style="width:' + Math.round(100 * view.restOfWorld.share / maxShare) + '%"></div></div></td>' +
-        '<td class="num">' + prefix + fmt(view.restOfWorld.count) + '</td><td class="num">' + view.restOfWorld.share.toFixed(1) + '%</td></tr>';
+        '<td class="bar-col"><div class="bar"><div style="width:' + Math.round(100 * s.restOfWorld.share / maxShare) + '%"></div></div></td>' +
+        '<td class="num">' + prefix + fmt(s.restOfWorld.count) + '</td><td class="num">' + s.restOfWorld.share.toFixed(1) + '%</td>' +
+        changeCells(s.restOfWorld.count, comp ? comp.rest : null, prefix) + '</tr>';
+    }
+    rows += '<tr class="total"><td class="rank"></td><td>Total</td><td class="bar-col"></td>' +
+      '<td class="num">' + prefix + fmt(s.total) + '</td><td class="num">100.0%</td>' +
+      changeCells(s.total, comp ? comp.total : null, prefix) + '</tr>';
+    var note;
+    if (comp) {
+      note = 'Change vs ' + fmtDate(comp.date) + ' (28 days ago).';
+    } else if (history && history.snapshots && history.snapshots.length) {
+      var first = new Date(history.snapshots[0].date + 'T12:00:00').getTime() + 28 * 86400000;
+      note = 'Change vs 28 days ago — first comparison ' + fmtDate(new Date(first).toISOString().slice(0, 10)) + '.';
+    } else {
+      note = 'Change vs 28 days ago — comparisons appear once a month of history is saved.';
     }
     body.innerHTML = '<table><thead><tr><th>#</th><th>Country</th><th class="bar-col">Share</th><th class="num">' +
-      unitLabel + '</th><th class="num">% of total</th></tr></thead><tbody>' + rows + '</tbody></table>';
+      unitLabel + '</th><th class="num">% of total</th><th class="num">Change</th><th class="num">% change</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+      '<p class="compare-note">' + note + '</p>';
   }
 
   function setFilter(id) {
@@ -1666,8 +1724,7 @@
       overlay.classList.remove('show');
       ranked.style.display = '';
       renderMap(s.countries, id === 'ga4');
-      renderTable({ countries: s.countries, restOfWorld: s.restOfWorld },
-        id === 'ga4' ? 'Visits' : s.metric, id === 'ga4');
+      renderTable(id, s, id === 'ga4' ? 'Visits' : s.metric, id === 'ga4');
     } else {
       document.getElementById('view-note').textContent = s.note || '';
       document.getElementById('overlay-title').textContent = display + ' data is coming soon';
@@ -1714,6 +1771,12 @@
     .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
     .then(function (json) {
       data = json;
+      return fetch(HISTORY_URL, {cache: 'no-cache'})
+        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .catch(function () { return null; });
+    })
+    .then(function (hist) {
+      history = hist;
       var loading = document.getElementById('loading');
       if (loading) loading.remove();
       initMap();
