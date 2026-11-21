@@ -1568,11 +1568,13 @@
     layer.clearLayers();
     var prefix = exact ? '' : '~';
     // Fan out labels that would otherwise pile up: group the permanent labels
-    // (top 5) whose anchors sit close together on screen, then give each label
-    // in a cluster its own direction, most prominent first. Singletons keep
-    // their hand-tuned LABEL_DIR direction.
-    var pts = countries.map(function (c) { return map.latLngToContainerPoint([c.lat, c.lng]); });
-    var CLUSTER_PX = 130;
+    // (top 5) whose anchors sit close together on the globe, then give each
+    // label in a cluster its own direction, most prominent first. Singletons
+    // keep their hand-tuned LABEL_DIR direction. Distance is in degrees, so
+    // the grouping is the same at any zoom or screen size — the Europe
+    // cluster (anchors ~5 deg apart) fans out, while US/Canada (~18 deg
+    // apart) correctly stay separate.
+    var CLUSTER_DEG = 12;
     var FAN_DIRS = ['top', 'right', 'bottom', 'left'];
     var dirFor = {}, clustered = {};
     var seen = {};
@@ -1586,8 +1588,8 @@
         countries.forEach(function (c2, j) {
           if (j >= 5 || seen[j]) return;
           var near = cluster.some(function (k) {
-            var dx = pts[j].x - pts[k].x, dy = pts[j].y - pts[k].y;
-            return Math.sqrt(dx * dx + dy * dy) < CLUSTER_PX;
+            var dLat = c2.lat - countries[k].lat, dLng = c2.lng - countries[k].lng;
+            return Math.sqrt(dLat * dLat + dLng * dLng) < CLUSTER_DEG;
           });
           if (near) { cluster.push(j); seen[j] = true; grew = true; }
         });
