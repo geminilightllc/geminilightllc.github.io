@@ -1634,6 +1634,9 @@
 
   function comparisonFor(srcId, asOf) {
     // Snapshot nearest 28 days before the current data date, if one exists.
+    // Still in the first month of tracking (oldest snapshot < 28 days old):
+    // 28 days ago both sources were at zero, so the baseline is all zeros
+    // and every row shows as growth. After day 28 the real snapshot is used.
     if (!history || !history.snapshots || !history.snapshots.length) return null;
     var target = Date.parse(asOf) - 28 * 86400000;
     var best = null, bestDiff = Infinity;
@@ -1641,12 +1644,18 @@
       var d = Math.abs(Date.parse(snap.date) - target);
       if (d < bestDiff) { bestDiff = d; best = snap; }
     });
-    if (!best || bestDiff > 4 * 86400000 || !best[srcId]) return null;
-    var byCode = {};
-    (best[srcId].countries || []).forEach(function (c) { byCode[c.code] = c.count; });
-    return { date: best.date, byCode: byCode,
-             rest: best[srcId].restOfWorld ? best[srcId].restOfWorld.count : 0,
-             total: best[srcId].total };
+    if (best && bestDiff <= 4 * 86400000 && best[srcId]) {
+      var byCode = {};
+      (best[srcId].countries || []).forEach(function (c) { byCode[c.code] = c.count; });
+      return { date: best.date, zero: false, byCode: byCode,
+               rest: best[srcId].restOfWorld ? best[srcId].restOfWorld.count : 0,
+               total: best[srcId].total };
+    }
+    var oldest = Date.parse(history.snapshots[0].date);
+    if (Date.parse(asOf) - oldest < 28 * 86400000) {
+      return { date: null, zero: true, byCode: {}, rest: 0, total: 0 };
+    }
+    return null;
   }
 
   function changeCells(cur, old, prefix) {
@@ -1691,11 +1700,13 @@
       '<td class="num">' + prefix + fmt(s.total) + '</td><td class="num">100.0%</td>' +
       changeCells(s.total, comp ? comp.total : null, prefix) + '</tr>';
     var note;
-    if (comp) {
+    if (comp && !comp.zero) {
       note = 'Change vs ' + fmtDate(comp.date) + ' (28 days ago).';
-    } else if (history && history.snapshots && history.snapshots.length) {
+    } else if (comp && comp.zero) {
       var first = new Date(history.snapshots[0].date + 'T12:00:00').getTime() + 28 * 86400000;
-      note = 'Change vs 28 days ago — first comparison ' + fmtDate(new Date(first).toISOString().slice(0, 10)) + '.';
+      note = 'Change vs 28 days ago — previous month was zero across the board, so all change shows as growth. First true comparison ' + fmtDate(new Date(first).toISOString().slice(0, 10)) + '.';
+    } else if (history && history.snapshots && history.snapshots.length) {
+      note = 'Change vs 28 days ago — no snapshot near that date.';
     } else {
       note = 'Change vs 28 days ago — comparisons appear once a month of history is saved.';
     }
