@@ -1,1 +1,179 @@
-{"asOf":"2026-11-21","generatedBy":"Muse (Forge) — Global Reach draft preview build, Fri Nov 20, 2026","notes":["Counts are rounded estimates: each country's share x the source's follower total, rounded to the nearest 5. Shares are the measured values.","The page shows Instagram followers and website visitors as separate views (Nov 21, 2026) — no combined total. Facebook and TikTok stay 'coming soon' until their data is connected.","A scheduled refresh updates this file only — the page fetches it and never needs editing for new numbers."],"sources":{"facebook":{"asOf":null,"countries":[],"label":"Facebook","metric":"Followers","note":"Two blockers: (1) Facebook professional consent is required before any Page reads; (2) the current facebook-cli exposes no followers_by_country metric (verified Nov 20, 2026 via the CLI's own --help — the only metrics are follower_count, views, unique_viewers, engagement, profile_visits, new_followers, unfollowers). Needs a Graph API pull or manual numbers from the Page Insights dashboard.","status":"coming-soon","total":null},"ga4":{"asOf":"2026-11-21","countries":[{"code":"US","count":48,"lat":39.8283,"lng":-98.5795,"name":"United States","share":62.3},{"code":"NL","count":12,"lat":52.1326,"lng":5.2913,"name":"Netherlands","share":15.6},{"code":"DE","count":5,"lat":51.1657,"lng":10.4515,"name":"Germany","share":6.5},{"code":"CZ","count":2,"lat":49.8175,"lng":15.473,"name":"Czechia","share":2.6},{"code":"IN","count":2,"lat":20.5937,"lng":78.9629,"name":"India","share":2.6},{"code":"LT","count":2,"lat":55.1694,"lng":23.8813,"name":"Lithuania","share":2.6},{"code":"PT","count":2,"lat":39.3999,"lng":-8.2245,"name":"Portugal","share":2.6},{"code":"FR","count":1,"lat":46.2276,"lng":2.2137,"name":"France","share":1.3},{"code":"RO","count":1,"lat":45.9432,"lng":24.9668,"name":"Romania","share":1.3},{"code":"GB","count":1,"lat":54.2361,"lng":-4.5481,"name":"United Kingdom","share":1.3}],"label":"Google Analytics","metric":"Visits","note":"Sessions by country from the GA4 Demographic details report (property 564967131), read via the GA4 dashboard — exact counts, not rounded.","restOfWorld":{"count":1,"share":1.3},"status":"live","total":77,"window":"Visits, last 28 days"},"instagram":{"account":"@max.lifecoach_dog","asOf":"2026-11-20","countries":[{"code":"US","count":440,"lat":39.8283,"lng":-98.5795,"name":"United States","share":34.4},{"code":"BR","count":110,"lat":-14.235,"lng":-51.9253,"name":"Brazil","share":8.5},{"code":"GB","count":100,"lat":54.2361,"lng":-4.5481,"name":"United Kingdom","share":7.8},{"code":"IN","count":85,"lat":20.5937,"lng":78.9629,"name":"India","share":6.6},{"code":"CA","count":40,"lat":56.1304,"lng":-106.3468,"name":"Canada","share":3.2}],"label":"Instagram","metric":"Followers","restOfWorld":{"count":505,"share":39.5},"status":"live","total":1278,"window":"Follower snapshot, last 28 days"},"tiktok":{"asOf":null,"countries":[],"label":"TikTok","metric":"Followers","note":"No connector for TikTok audience geography — numbers added manually.","status":"coming-soon","total":null}}}
+{
+  "asOf": "2026-11-22",
+  "generatedBy": "Muse (Forge) \u2014 Global Reach draft preview build, Fri Nov 20, 2026",
+  "notes": [
+    "Counts are rounded estimates: each country's share x the source's follower total, rounded to the nearest 5. Shares are the measured values.",
+    "The page shows Instagram followers and website visitors as separate views (Nov 21, 2026) \u2014 no combined total. Facebook and TikTok stay 'coming soon' until their data is connected.",
+    "A scheduled refresh updates this file only \u2014 the page fetches it and never needs editing for new numbers."
+  ],
+  "sources": {
+    "facebook": {
+      "asOf": null,
+      "countries": [],
+      "label": "Facebook",
+      "metric": "Followers",
+      "note": "Two blockers: (1) Facebook professional consent is required before any Page reads; (2) the current facebook-cli exposes no followers_by_country metric (verified Nov 20, 2026 via the CLI's own --help \u2014 the only metrics are follower_count, views, unique_viewers, engagement, profile_visits, new_followers, unfollowers). Needs a Graph API pull or manual numbers from the Page Insights dashboard.",
+      "status": "coming-soon",
+      "total": null
+    },
+    "ga4": {
+      "asOf": "2026-11-21",
+      "countries": [
+        {
+          "code": "US",
+          "count": 48,
+          "lat": 39.8283,
+          "lng": -98.5795,
+          "name": "United States",
+          "share": 62.3
+        },
+        {
+          "code": "NL",
+          "count": 12,
+          "lat": 52.1326,
+          "lng": 5.2913,
+          "name": "Netherlands",
+          "share": 15.6
+        },
+        {
+          "code": "DE",
+          "count": 5,
+          "lat": 51.1657,
+          "lng": 10.4515,
+          "name": "Germany",
+          "share": 6.5
+        },
+        {
+          "code": "CZ",
+          "count": 2,
+          "lat": 49.8175,
+          "lng": 15.473,
+          "name": "Czechia",
+          "share": 2.6
+        },
+        {
+          "code": "IN",
+          "count": 2,
+          "lat": 20.5937,
+          "lng": 78.9629,
+          "name": "India",
+          "share": 2.6
+        },
+        {
+          "code": "LT",
+          "count": 2,
+          "lat": 55.1694,
+          "lng": 23.8813,
+          "name": "Lithuania",
+          "share": 2.6
+        },
+        {
+          "code": "PT",
+          "count": 2,
+          "lat": 39.3999,
+          "lng": -8.2245,
+          "name": "Portugal",
+          "share": 2.6
+        },
+        {
+          "code": "FR",
+          "count": 1,
+          "lat": 46.2276,
+          "lng": 2.2137,
+          "name": "France",
+          "share": 1.3
+        },
+        {
+          "code": "RO",
+          "count": 1,
+          "lat": 45.9432,
+          "lng": 24.9668,
+          "name": "Romania",
+          "share": 1.3
+        },
+        {
+          "code": "GB",
+          "count": 1,
+          "lat": 54.2361,
+          "lng": -4.5481,
+          "name": "United Kingdom",
+          "share": 1.3
+        }
+      ],
+      "label": "Google Analytics",
+      "metric": "Visits",
+      "note": "Sessions by country from the GA4 Demographic details report (property 564967131), read via the GA4 dashboard \u2014 exact counts, not rounded.",
+      "restOfWorld": {
+        "count": 1,
+        "share": 1.3
+      },
+      "status": "live",
+      "total": 77,
+      "window": "Visits, last 28 days"
+    },
+    "instagram": {
+      "account": "@max.lifecoach_dog",
+      "asOf": "2026-11-22",
+      "countries": [
+        {
+          "code": "US",
+          "count": 440,
+          "lat": 39.8283,
+          "lng": -98.5795,
+          "name": "United States",
+          "share": 34.4
+        },
+        {
+          "code": "BR",
+          "count": 110,
+          "lat": -14.235,
+          "lng": -51.9253,
+          "name": "Brazil",
+          "share": 8.5
+        },
+        {
+          "code": "GB",
+          "count": 100,
+          "lat": 54.2361,
+          "lng": -4.5481,
+          "name": "United Kingdom",
+          "share": 7.8
+        },
+        {
+          "code": "IN",
+          "count": 85,
+          "lat": 20.5937,
+          "lng": 78.9629,
+          "name": "India",
+          "share": 6.7
+        },
+        {
+          "code": "CA",
+          "count": 45,
+          "lat": 56.1304,
+          "lng": -106.3468,
+          "name": "Canada",
+          "share": 3.4
+        }
+      ],
+      "label": "Instagram",
+      "metric": "Followers",
+      "restOfWorld": {
+        "count": 495,
+        "share": 39.2
+      },
+      "status": "live",
+      "total": 1276,
+      "window": "Follower snapshot, last 28 days"
+    },
+    "tiktok": {
+      "asOf": null,
+      "countries": [],
+      "label": "TikTok",
+      "metric": "Followers",
+      "note": "No connector for TikTok audience geography \u2014 numbers added manually.",
+      "status": "coming-soon",
+      "total": null
+    }
+  }
+}
