@@ -1,10 +1,10 @@
 {
-  "asOf": "2026-11-22",
-  "generatedBy": "Muse (Forge) \u2014 Global Reach draft preview build, Fri Nov 20, 2026",
+  "asOf": "2026-11-23",
+  "generatedBy": "Muse (Forge) — Global Reach draft preview build, Fri Nov 20, 2026",
   "notes": [
     "Counts are rounded estimates: each country's share x the source's follower total, rounded to the nearest 5. Shares are the measured values.",
-    "The page shows Instagram followers and website visitors as separate views (Nov 21, 2026) \u2014 no combined total. Facebook and TikTok stay 'coming soon' until their data is connected.",
-    "A scheduled refresh updates this file only \u2014 the page fetches it and never needs editing for new numbers."
+    "The page shows Instagram followers and website visitors as separate views (Nov 21, 2026) — no combined total. Facebook and TikTok stay 'coming soon' until their data is connected.",
+    "A scheduled refresh updates this file only — the page fetches it and never needs editing for new numbers."
   ],
   "sources": {
     "facebook": {
@@ -12,7 +12,7 @@
       "countries": [],
       "label": "Facebook",
       "metric": "Followers",
-      "note": "Two blockers: (1) Facebook professional consent is required before any Page reads; (2) the current facebook-cli exposes no followers_by_country metric (verified Nov 20, 2026 via the CLI's own --help \u2014 the only metrics are follower_count, views, unique_viewers, engagement, profile_visits, new_followers, unfollowers). Needs a Graph API pull or manual numbers from the Page Insights dashboard.",
+      "note": "Two blockers: (1) Facebook professional consent is required before any Page reads; (2) the current facebook-cli exposes no followers_by_country metric (verified Nov 20, 2026 via the CLI's own --help — the only metrics are follower_count, views, unique_viewers, engagement, profile_visits, new_followers, unfollowers). Needs a Graph API pull or manual numbers from the Page Insights dashboard.",
       "status": "coming-soon",
       "total": null
     },
@@ -102,7 +102,7 @@
       ],
       "label": "Google Analytics",
       "metric": "Visits",
-      "note": "Sessions by country from the GA4 Demographic details report (property 564967131), read via the GA4 dashboard \u2014 exact counts, not rounded.",
+      "note": "Sessions by country from the GA4 Demographic details report (property 564967131), read via the GA4 dashboard — exact counts, not rounded.",
       "restOfWorld": {
         "count": 1,
         "share": 1.3
@@ -113,7 +113,7 @@
     },
     "instagram": {
       "account": "@max.lifecoach_dog",
-      "asOf": "2026-11-22",
+      "asOf": "2026-11-23",
       "countries": [
         {
           "code": "US",
@@ -121,7 +121,7 @@
           "lat": 39.8283,
           "lng": -98.5795,
           "name": "United States",
-          "share": 34.4
+          "share": 34.6
         },
         {
           "code": "BR",
@@ -145,25 +145,25 @@
           "lat": 20.5937,
           "lng": 78.9629,
           "name": "India",
-          "share": 6.7
+          "share": 6.6
         },
         {
           "code": "CA",
-          "count": 45,
+          "count": 40,
           "lat": 56.1304,
           "lng": -106.3468,
           "name": "Canada",
-          "share": 3.4
+          "share": 3.2
         }
       ],
       "label": "Instagram",
       "metric": "Followers",
       "restOfWorld": {
-        "count": 495,
-        "share": 39.2
+        "count": 500,
+        "share": 39.3
       },
       "status": "live",
-      "total": 1276,
+      "total": 1275,
       "window": "Follower snapshot, last 28 days"
     },
     "tiktok": {
@@ -171,7 +171,7 @@
       "countries": [],
       "label": "TikTok",
       "metric": "Followers",
-      "note": "No connector for TikTok audience geography \u2014 numbers added manually.",
+      "note": "No connector for TikTok audience geography — numbers added manually.",
       "status": "coming-soon",
       "total": null
     }
