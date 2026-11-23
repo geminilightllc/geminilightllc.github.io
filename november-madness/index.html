@@ -160,6 +160,8 @@
     margin-bottom: 16px;
   }
   .matchup {
+    display: grid;
+    gap: 12px;
     margin-bottom: 24px;
   }
   .matchup:last-child { margin-bottom: 0; }
@@ -180,16 +182,24 @@
     background: var(--cream);
     padding: 3px 10px;
     border-radius: 10px;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+  .matchup-date:hover {
+    background: var(--gold);
+    color: var(--white);
   }
   .dog-slot {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 14px;
     border: 2px solid #E8E0D0;
     border-radius: 12px;
-    margin-bottom: 8px;
+    margin-bottom: 0;
     background: var(--cream);
+    text-align: center;
   }
   .dog-slot:last-child { margin-bottom: 0; }
   .dog-slot.winner {
@@ -197,17 +207,18 @@
     background: #FFF9E6;
   }
   .dog-photo {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border-radius: 10px;
     background: #DDD;
-    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.4rem;
+    font-size: 3rem;
     color: #999;
     overflow: hidden;
+    border: 2px solid var(--gold);
+    margin-bottom: 12px;
   }
   .dog-photo img {
     width: 100%;
@@ -217,24 +228,24 @@
   .dog-info { flex: 1; min-width: 0; }
   .dog-name {
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.2rem;
     color: var(--text-dark);
   }
   .dog-name.empty { color: #AAA; font-weight: 600; }
   .dog-detail {
-    font-size: 0.82rem;
+    font-size: 1.05rem;
+    line-height: 1.4;
     color: var(--text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    margin-top: 0.3rem;
   }
   .vs-divider {
     text-align: center;
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     font-weight: 700;
     color: var(--gold);
     letter-spacing: 0.15em;
     padding: 4px 0;
+    align-self: center;
   }
 
   /* Champion */
@@ -257,6 +268,8 @@
   .champion .dog-photo {
     width: 80px;
     height: 80px;
+    aspect-ratio: auto;
+    border-radius: 50%;
     margin: 0 auto 12px;
     font-size: 2rem;
     border: 3px solid var(--gold);
@@ -280,6 +293,8 @@
   }
   @media (min-width: 600px) {
     .steps { grid-template-columns: 1fr 1fr 1fr; }
+    .matchup { grid-template-columns: 1fr auto 1fr; }
+    .matchup-header { grid-column: 1 / -1; }
   }
   .step {
     background: var(--white);
@@ -437,7 +452,7 @@
   <!-- BRACKET -->
   <section class="section">
     <h2 class="section-title">The Bracket</h2>
-    <p class="section-sub">Finalists announced Monday, Nov 23 — voting opens the same day.</p>
+    <p class="section-sub">The final four are set — vote now in our Instagram Stories!</p>
 
     <div class="bracket">
       <div class="bracket-round-label">— Semifinals —</div>
@@ -445,21 +460,21 @@
       <div class="matchup">
         <div class="matchup-header">
           <span class="matchup-name">Semifinal 1</span>
-          <span class="matchup-date">Vote Mon Nov 23</span>
+          <a class="matchup-date" href="https://www.instagram.com/stories/max.lifecoach_dog/" target="_blank" rel="noopener">Vote Mon Nov 23</a>
         </div>
         <div class="dog-slot">
-          <div class="dog-photo">?</div>
+          <div class="dog-photo"><img src="cc-rebel.webp" alt="Rebel CC, a white fluffy dog in a black leather jacket"></div>
           <div class="dog-info">
-            <div class="dog-name empty">To be announced</div>
-            <div class="dog-detail">Finalist revealed Nov 23</div>
+            <div class="dog-name">Rebel CC</div>
+            <div class="dog-detail">Sassy. Wild. Already plotting her escape.</div>
           </div>
         </div>
         <div class="vs-divider">VS</div>
         <div class="dog-slot">
-          <div class="dog-photo">?</div>
+          <div class="dog-photo"><img src="delilah-scottish.webp" alt="Delilah Scottish Lass, a long-haired cream dachshund in a tartan kilt and tam"></div>
           <div class="dog-info">
-            <div class="dog-name empty">To be announced</div>
-            <div class="dog-detail">Finalist revealed Nov 23</div>
+            <div class="dog-name">Delilah Scottish Lass</div>
+            <div class="dog-detail">Professional nap taker. Scottish and proud.</div>
           </div>
         </div>
       </div>
@@ -467,21 +482,21 @@
       <div class="matchup">
         <div class="matchup-header">
           <span class="matchup-name">Semifinal 2</span>
-          <span class="matchup-date">Vote Mon Nov 23</span>
+          <a class="matchup-date" href="https://www.instagram.com/stories/max.lifecoach_dog/" target="_blank" rel="noopener">Vote Mon Nov 23</a>
         </div>
         <div class="dog-slot">
-          <div class="dog-photo">?</div>
+          <div class="dog-photo"><img src="charlie-brown-superhero.webp" alt="Charlie Brown Superhero, a beagle in a flowing red cape"></div>
           <div class="dog-info">
-            <div class="dog-name empty">To be announced</div>
-            <div class="dog-detail">Finalist revealed Nov 23</div>
+            <div class="dog-name">Charlie Brown Superhero</div>
+            <div class="dog-detail">He can fly. The cape is just confirmation.</div>
           </div>
         </div>
         <div class="vs-divider">VS</div>
         <div class="dog-slot">
-          <div class="dog-photo">?</div>
+          <div class="dog-photo"><img src="shadow-dracula.webp" alt="Shadow Dracula, a black cat in a black cape with red lining"></div>
           <div class="dog-info">
-            <div class="dog-name empty">To be announced</div>
-            <div class="dog-detail">Finalist revealed Nov 23</div>
+            <div class="dog-name">Shadow Dracula</div>
+            <div class="dog-detail">Friendly to everyone. The cape is just drama.</div>
           </div>
         </div>
       </div>
@@ -492,7 +507,7 @@
       <div class="matchup">
         <div class="matchup-header">
           <span class="matchup-name">Championship</span>
-          <span class="matchup-date">Vote Tue Nov 24</span>
+          <a class="matchup-date" href="https://www.instagram.com/stories/max.lifecoach_dog/" target="_blank" rel="noopener">Vote Tue Nov 24</a>
         </div>
         <div class="dog-slot">
           <div class="dog-photo">?</div>
@@ -553,9 +568,9 @@
 
   <!-- VOTE CTA -->
   <div class="cta-box">
-    <h2>Ready to <span class="gold">Vote?</span></h2>
-    <p>Polls open Monday, Nov 23 on Instagram Stories. Follow @max.lifecoach_dog so you don't miss a round.</p>
-    <a href="https://www.instagram.com/max.lifecoach_dog/" class="cta-btn" target="_blank" rel="noopener">Follow on Instagram →</a>
+    <h2>Voting Is <span class="gold">Live!</span></h2>
+    <p>Semifinal polls are open now on Instagram Stories — tap in and pick your favorites. Polls close in 24 hours.</p>
+    <a href="https://www.instagram.com/stories/max.lifecoach_dog/" class="cta-btn" target="_blank" rel="noopener">Vote in Our Stories →</a>
     <a href="https://www.instagram.com/max.lifecoach_dog/" class="cta-secondary" target="_blank" rel="noopener">@max.lifecoach_dog</a>
   </div>
 
