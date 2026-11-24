@@ -247,6 +247,47 @@
     padding: 4px 0;
     align-self: center;
   }
+  .winner-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--green-dark);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    padding: 3px 10px;
+    border-radius: 10px;
+    margin-top: 8px;
+  }
+  .result-bar {
+    grid-column: 1 / -1;
+    display: flex;
+    height: 28px;
+    border-radius: 14px;
+    overflow: hidden;
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 28px;
+    white-space: nowrap;
+  }
+  .result-bar .seg-win {
+    background: var(--gold);
+    color: var(--green-dark);
+    text-align: center;
+    overflow: hidden;
+  }
+  .result-bar .seg-lose {
+    background: #E8E0D0;
+    color: var(--text-muted);
+    text-align: center;
+    overflow: hidden;
+  }
+  .result-line {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-weight: 700;
+    color: var(--green);
+    font-size: 0.95rem;
+  }
 
   /* Champion */
   .champion {
@@ -452,7 +493,7 @@
   <!-- BRACKET -->
   <section class="section">
     <h2 class="section-title">The Bracket</h2>
-    <p class="section-sub">The final four are set — vote now in our Instagram Stories!</p>
+    <p class="section-sub">The final is set — Delilah vs Shadow! Vote now in our Instagram Stories.</p>
 
     <div class="bracket">
       <div class="bracket-round-label">— Semifinals —</div>
@@ -460,7 +501,7 @@
       <div class="matchup">
         <div class="matchup-header">
           <span class="matchup-name">Semifinal 1</span>
-          <a class="matchup-date" href="https://www.instagram.com/stories/max.lifecoach_dog/" target="_blank" rel="noopener">Vote Mon Nov 23</a>
+          <span class="matchup-date">Decided Mon Nov 23</span>
         </div>
         <div class="dog-slot">
           <div class="dog-photo"><img src="cc-rebel.webp" alt="Rebel CC, a white fluffy dog in a black leather jacket"></div>
@@ -470,19 +511,25 @@
           </div>
         </div>
         <div class="vs-divider">VS</div>
-        <div class="dog-slot">
+        <div class="dog-slot winner">
           <div class="dog-photo"><img src="delilah-scottish.webp" alt="Delilah Scottish Lass, a long-haired cream dachshund in a tartan kilt and tam"></div>
           <div class="dog-info">
             <div class="dog-name">Delilah Scottish Lass</div>
             <div class="dog-detail">Professional nap taker. Scottish and proud.</div>
+            <span class="winner-badge">✓ WINNER</span>
           </div>
         </div>
+        <div class="result-bar">
+          <div class="seg-lose" style="width: 14%;">CC 14%</div>
+          <div class="seg-win" style="width: 86%;">Delilah 86%</div>
+        </div>
+        <div class="result-line">Delilah wins 86% – 14%</div>
       </div>
 
       <div class="matchup">
         <div class="matchup-header">
           <span class="matchup-name">Semifinal 2</span>
-          <a class="matchup-date" href="https://www.instagram.com/stories/max.lifecoach_dog/" target="_blank" rel="noopener">Vote Mon Nov 23</a>
+          <span class="matchup-date">Decided Mon Nov 23</span>
         </div>
         <div class="dog-slot">
           <div class="dog-photo"><img src="charlie-brown-superhero.webp" alt="Charlie Brown Superhero, a beagle in a flowing red cape"></div>
@@ -492,13 +539,19 @@
           </div>
         </div>
         <div class="vs-divider">VS</div>
-        <div class="dog-slot">
+        <div class="dog-slot winner">
           <div class="dog-photo"><img src="shadow-dracula.webp" alt="Shadow Dracula, a black cat in a black cape with red lining"></div>
           <div class="dog-info">
             <div class="dog-name">Shadow Dracula</div>
             <div class="dog-detail">Friendly to everyone. The cape is just drama.</div>
+            <span class="winner-badge">✓ WINNER</span>
           </div>
         </div>
+        <div class="result-bar">
+          <div class="seg-lose" style="width: 43%;">Charlie 43%</div>
+          <div class="seg-win" style="width: 57%;">Shadow 57%</div>
+        </div>
+        <div class="result-line">Shadow wins 57% – 43%</div>
       </div>
     </div>
 
@@ -510,18 +563,18 @@
           <a class="matchup-date" href="https://www.instagram.com/stories/max.lifecoach_dog/" target="_blank" rel="noopener">Vote Tue Nov 24</a>
         </div>
         <div class="dog-slot">
-          <div class="dog-photo">?</div>
+          <div class="dog-photo"><img src="delilah-scottish.webp" alt="Delilah Scottish Lass, a long-haired cream dachshund in a tartan kilt and tam"></div>
           <div class="dog-info">
-            <div class="dog-name empty">Winner of Semifinal 1</div>
-            <div class="dog-detail">Decided by your votes</div>
+            <div class="dog-name">Delilah Scottish Lass</div>
+            <div class="dog-detail">Professional nap taker. Scottish and proud.</div>
           </div>
         </div>
         <div class="vs-divider">VS</div>
         <div class="dog-slot">
-          <div class="dog-photo">?</div>
+          <div class="dog-photo"><img src="shadow-dracula.webp" alt="Shadow Dracula, a black cat in a black cape with red lining"></div>
           <div class="dog-info">
-            <div class="dog-name empty">Winner of Semifinal 2</div>
-            <div class="dog-detail">Decided by your votes</div>
+            <div class="dog-name">Shadow Dracula</div>
+            <div class="dog-detail">Friendly to everyone. The cape is just drama.</div>
           </div>
         </div>
       </div>
@@ -568,8 +621,8 @@
 
   <!-- VOTE CTA -->
   <div class="cta-box">
-    <h2>Voting Is <span class="gold">Live!</span></h2>
-    <p>Semifinal polls are open now on Instagram Stories — tap in and pick your favorites. Polls close in 24 hours.</p>
+    <h2>The Final Is <span class="gold">Live!</span></h2>
+    <p>Delilah Scottish Lass vs Shadow Dracula — the championship poll is open now on Instagram Stories. Winner announced Wed Nov 25.</p>
     <a href="https://www.instagram.com/stories/max.lifecoach_dog/" class="cta-btn" target="_blank" rel="noopener">Vote in Our Stories →</a>
     <a href="https://www.instagram.com/max.lifecoach_dog/" class="cta-secondary" target="_blank" rel="noopener">@max.lifecoach_dog</a>
   </div>
